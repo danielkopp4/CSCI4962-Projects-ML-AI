@@ -82,7 +82,8 @@ rewards = {
 
 # have to handle ace condition later
 class BlackJackGame:
-    def __init__(self):
+    def __init__(self, infinite=False):
+        self.infinite = infinite
         self.reset_game()
 
     def reset_game(self):
@@ -172,6 +173,9 @@ class BlackJackGame:
 
     @property
     def ended(self):
+        if self.infinite:
+            return True
+        
         return len(self.deck) < 0.5 * 52
 
     @property
@@ -184,8 +188,8 @@ def map_seen_to_fixed_arr(seen_cards):
     return out
 
 class BlackJackEnv(gym.Env):
-    def __init__(self):
-        self.game = BlackJackGame()
+    def __init__(self, infinite=False):
+        self.game = BlackJackGame(infinite)
         self.action_space = gym.spaces.Discrete(2) # hit, stand
         low = np.zeros((3 + 52,))
         high = np.concatenate(([21, 11], np.ones((1 + 52))))
